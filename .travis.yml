@@ -3,12 +3,10 @@ env:
   - RASPBIAN_ZIP_URL=http://vx2-downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-03-03/2017-03-02-raspbian-jessie-lite.zip
   - PICROFT_VERSION=$TRAVIS_TAG
 script: scripts/build.sh
-  on:
-    tags: true
 deploy:
   provider: releases
   api_key: $GITHUB_OAUTH_TOKEN
   file: "build/picroft-$TRAVIS_TAG.zip"
   skip_cleanup: true
-  on:
-    tags: true
+on:
+  tags: true
