@@ -7,7 +7,7 @@ script: scripts/build.sh
 deploy:
   provider: releases
   api_key: $GITHUB_OAUTH_TOKEN
-  file: "build/picroft-$TRAVIS_TAG.zip"
+  file: "build/picroft-$TRAVIS_TAG.img.zip"
   skip_cleanup: true
   on:
     tags: true
