@@ -1,7 +1,8 @@
 sudo: required
 env:
-  - RASPBIAN_ZIP_URL=http://vx2-downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-03-03/2017-03-02-raspbian-jessie-lite.zip
-  - PICROFT_VERSION=$TRAVIS_TAG
+  global:
+    - RASPBIAN_ZIP_URL=http://vx2-downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-03-03/2017-03-02-raspbian-jessie-lite.zip
+    - PICROFT_VERSION=$TRAVIS_TAG
 script: scripts/build.sh
 deploy:
   provider: releases
