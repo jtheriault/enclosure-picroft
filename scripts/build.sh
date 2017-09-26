@@ -28,15 +28,24 @@ let "OFFSET = $SECTOR_START * 512"
 mkdir raspbian
 sudo mount -v -o offset=$OFFSET -t ext4 raspbian.img ./raspbian
 
-# 4. copy folders into image
+# 4. Install ARM emulator
+sudo apt install qemu-system-arm
+
+# 5. Download MyCroft standalone install
+curl -o raspbian/standalone.sh http://bootstrap.mycroft.ai/standalone.sh
+
+# 6. chroot, sudo bash run standalone.sh
+chroot raspbian ./standalone.sh
+
+# 7. copy folders into image
 sudo cp -R ../etc/* raspbian/etc/
 sudo cp -R ../home/* raspbian/home/
 
-# 5. unmount image
+# 8. unmount image
 sync
 sudo umount raspbian
 
-# 6. Name build
+# 9. Name build
 mv raspbian.img picroft-$PICROFT_VERSION.img
 zip picroft-$PICROFT_VERSION.img.zip picroft-$PICROFT_VERSION.img
 
