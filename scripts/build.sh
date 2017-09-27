@@ -18,8 +18,8 @@ mkdir -p build
 cd build
 
 # 2. Get Raspbian image into place
-curl -o raspbian-jessie-lite.zip $RASPBIAN_ZIP_URL
-unzip raspbian-jessie-lite.zip
+curl -o raspbian-lite.zip $RASPBIAN_ZIP_URL
+unzip raspbian-lite.zip
 mv *.img raspbian.img
 
 # 3. Mount Raspbian image
@@ -29,13 +29,15 @@ mkdir raspbian
 sudo mount -v -o offset=$OFFSET -t ext4 raspbian.img ./raspbian
 
 # 4. Install ARM emulator
-sudo apt install qemu-system-arm
+sudo apt-get install qemu-user-static
+sudo cp $(which qemu-arm-static) raspbian/usr/bin
 
-# 5. Download MyCroft standalone install
-curl -o raspbian/standalone.sh http://bootstrap.mycroft.ai/standalone.sh
+# 5. Embed Mycroft installation script
+sudo cp ../scripts/mycroft-install.sh raspbian/
 
 # 6. chroot, sudo bash run standalone.sh
-chroot raspbian ./standalone.sh
+sudo chroot raspbian qemu-arm-static /bin/bash mycroft-install.sh
+sudo rm raspbian/mycroft-install.sh
 
 # 7. copy folders into image
 sudo cp -R ../etc/* raspbian/etc/
