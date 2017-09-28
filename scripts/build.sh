@@ -22,11 +22,21 @@ curl -o raspbian-lite.zip $RASPBIAN_ZIP_URL
 unzip raspbian-lite.zip
 mv *.img raspbian.img
 
-# 3. Mount Raspbian image
+# 3. Load Raspbian image
+
+# 3.1 Grow image file to add space for Mycroft
+dd if=/dev/zero bs=1M count=512 >> raspbian.img
+IMAGE_END=$(parted raspbian.img print free | tail -n2 | xargs | cut -d ' ' -f2 | cut -d 'M' -f1)
+parted raspbian.img resizepart 2 $IMAGE_END
+
+# 3.2 Mount Raspbian image
 SECTOR_START=$(fdisk -l raspbian.img | grep Linux | xargs | cut -d " " -f2)
 let "OFFSET = $SECTOR_START * 512"
 mkdir raspbian
-sudo mount -v -o offset=$OFFSET -t ext4 raspbian.img ./raspbian
+LOOP_MOUNT_DEVICE=$(sudo mount -v -o offset=$OFFSET -t ext4 raspbian.img ./raspbian | egrep -o '/dev/\w+')
+
+# 3.3 Expand file system
+sudo resize2fs $LOOP_MOUNT_DEVICE
 
 # 4. Install ARM emulator
 sudo apt-get install qemu-user-static
